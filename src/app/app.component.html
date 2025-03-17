@@ -1,0 +1,39 @@
+<div class="login-container">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+    <h2>Đăng nhập</h2>
+    
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        formControlName="email"
+        placeholder="Nhập email của bạn"
+      >
+      <div class="error-message" *ngIf="email?.errors?.['required'] && email?.touched">
+        Email là bắt buộc
+      </div>
+      <div class="error-message" *ngIf="email?.errors?.['email'] && email?.touched">
+        Email không hợp lệ
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Mật khẩu</label>
+      <input
+        type="password"
+        id="password"
+        formControlName="password"
+        placeholder="Nhập mật khẩu của bạn"
+      >
+      <div class="error-message" *ngIf="password?.errors?.['required'] && password?.touched">
+        Mật khẩu là bắt buộc
+      </div>
+      <div class="error-message" *ngIf="password?.errors?.['minlength'] && password?.touched">
+        Mật khẩu phải có ít nhất 6 ký tự
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="!loginForm.valid">Đăng nhập</button>
+  </form>
+</div>
