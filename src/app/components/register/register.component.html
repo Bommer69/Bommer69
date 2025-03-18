@@ -66,6 +66,10 @@
       </div>
     </div>
 
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
     <button type="submit" [disabled]="!registerForm.valid">Đăng ký</button>
     
     <div class="login-link">

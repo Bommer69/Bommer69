@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -12,8 +13,13 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class RegisterComponent {
   registerForm: FormGroup;
+  errorMessage: string = '';
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService
+  ) {
     this.registerForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
@@ -29,13 +35,15 @@ export class RegisterComponent {
       ? null : { mismatch: true };
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.registerForm.valid) {
-      console.log('Form submitted:', this.registerForm.value);
-      // Thêm logic xử lý đăng ký ở đây
-      
-      // Chuyển hướng đến trang đăng nhập
-      this.router.navigate(['/login']);
+      try {
+        const { email, password, fullName } = this.registerForm.value;
+        await this.authService.register(email, password, fullName);
+        this.router.navigate(['/login']);
+      } catch (error: any) {
+        this.errorMessage = error.message;
+      }
     }
   }
 

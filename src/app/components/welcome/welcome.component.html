@@ -1,12 +1,19 @@
 <div class="welcome-container">
   <div class="welcome-content">
-    <h1>Chào mừng đến với Angular!</h1>
+    <div class="user-info" *ngIf="userProfile">
+      <h1>Xin chào, {{ userProfile.fullName }}!</h1>
+      <p class="user-email">{{ userProfile.email }}</p>
+    </div>
+
     <div class="angular-logo">
       <img src="https://angular.io/assets/images/logos/angular/angular.svg" alt="Angular Logo">
     </div>
+    
     <p class="welcome-text">
-      Hé loo các bạn !
+      Đăng nhập thành công.
+      
     </p>
+
     <div class="features">
       <div class="feature-item">
         <h3>Angular Framework</h3>
@@ -21,5 +28,11 @@
         <p>Xây dựng UI từ các component có thể tái sử dụng</p>
       </div>
     </div>
+
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <button class="logout-btn" (click)="logout()">Đăng xuất</button>
   </div>
 </div>
