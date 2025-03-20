@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-welcome',
@@ -11,27 +10,16 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./welcome.component.css']
 })
 export class WelcomeComponent implements OnInit {
-  userProfile: any = null;
-  errorMessage: string = '';
+  userProfile: any = null; // Thông tin người dùng
+  errorMessage: string = ''; // Thông báo lỗi
 
-  constructor(private authService: AuthService) {}
-
-  async ngOnInit() {
-    try {
-      const user = await this.authService.getCurrentUser();
-      if (user) {
-        this.userProfile = await this.authService.getUserProfile(user.uid);
-      }
-    } catch (error: any) {
-      this.errorMessage = error.message;
-    }
+  // Hàm khởi tạo khi component được tải
+  ngOnInit() {
+    // Khởi tạo không dùng Firebase
   }
 
-  async logout() {
-    try {
-      await this.authService.logout();
-    } catch (error: any) {
-      this.errorMessage = error.message;
-    }
+  // Xử lý đăng xuất
+  logout() {
+    // Logic đăng xuất không dùng Firebase
   }
 }
