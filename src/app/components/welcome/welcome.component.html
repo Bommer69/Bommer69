@@ -1,38 +1,17 @@
 <div class="welcome-container">
   <div class="welcome-content">
-    <div class="user-info" *ngIf="userProfile">
-      <h1>Xin chào, {{ userProfile.fullName }}!</h1>
-      <p class="user-email">{{ userProfile.email }}</p>
+    <h1>Trang chủ</h1>
+    <div class="post-form">
+      <textarea placeholder="Bạn đang nghĩ gì?" [(ngModel)]="newPostContent"></textarea>
+      <button (click)="addPost()">Đăng</button>
     </div>
-
-    <div class="angular-logo">
-      <img src="https://angular.io/assets/images/logos/angular/angular.svg" alt="Angular Logo">
-    </div>
-    
-    <p class="welcome-text">
-      Đăng nhập thành công.
-      
-    </p>
-
-    <div class="features">
-      <div class="feature-item">
-        <h3>Angular Framework</h3>
-        <p>Một framework mạnh mẽ cho việc xây dựng ứng dụng web</p>
-      </div>
-      <div class="feature-item">
-        <h3>TypeScript</h3>
-        <p>JavaScript với type checking</p>
-      </div>
-      <div class="feature-item">
-        <h3>Component Based</h3>
-        <p>Xây dựng UI từ các component có thể tái sử dụng</p>
+    <div class="posts">
+      <div class="post" *ngFor="let post of posts">
+        <h3>{{ post.author }}</h3>
+        <p>{{ post.content }}</p>
+        <span class="timestamp">{{ post.timestamp | date: 'short' }}</span>
       </div>
     </div>
-
-    <div class="error-message" *ngIf="errorMessage">
-      {{ errorMessage }}
-    </div>
-
-    <button class="logout-btn" (click)="logout()">Đăng xuất</button>
   </div>
 </div>
+

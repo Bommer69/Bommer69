@@ -1,25 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.css']
 })
-export class WelcomeComponent implements OnInit {
-  userProfile: any = null; // Thông tin người dùng
-  errorMessage: string = ''; // Thông báo lỗi
+export class WelcomeComponent {
+  posts: { author: string; content: string; timestamp: Date }[] = [];
+  newPostContent: string = '';
 
-  // Hàm khởi tạo khi component được tải
-  ngOnInit() {
-    // Khởi tạo không dùng Firebase
-  }
-
-  // Xử lý đăng xuất
-  logout() {
-    // Logic đăng xuất không dùng Firebase
+  addPost() {
+    if (this.newPostContent.trim()) {
+      this.posts.unshift({
+        author: 'Người dùng', // Replace with dynamic user data if available
+        content: this.newPostContent,
+        timestamp: new Date()
+      });
+      this.newPostContent = '';
+    }
   }
 }
