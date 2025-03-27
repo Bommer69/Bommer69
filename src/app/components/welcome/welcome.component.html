@@ -1,38 +1,52 @@
-<div class="welcome-container">
-  <div class="welcome-content">
-    <div class="user-info" *ngIf="userProfile">
-      <h1>Xin chào, {{ userProfile.fullName }}!</h1>
-      <p class="user-email">{{ userProfile.email }}</p>
-    </div>
-
-    <div class="angular-logo">
-      <img src="https://angular.io/assets/images/logos/angular/angular.svg" alt="Angular Logo">
-    </div>
-    
-    <p class="welcome-text">
-      Đăng nhập thành công.
-      
-    </p>
-
-    <div class="features">
-      <div class="feature-item">
-        <h3>Angular Framework</h3>
-        <p>Một framework mạnh mẽ cho việc xây dựng ứng dụng web</p>
+<div class="navbar">
+  <img src="https://angular.io/assets/images/logos/angular/angular.svg" alt="Angular Logo" class="logo">
+  <h1>MyAngularApp</h1>
+  <span class="author-name">Xin chào, {{ authorName }}</span>
+</div>
+<div class="main-container">
+  <div class="sidebar">
+    <ul>
+      <li><a href="#">Trang chủ</a></li>
+      <li><a href="#">Thông báo</a></li>
+      <li><a href="#">Tin nhắn</a></li>
+      <li><a href="#">Cài đặt</a></li>
+    </ul>
+  </div>
+  <div class="welcome-container">
+    <div class="welcome-content">
+      <h1>Trang chủ</h1>
+      <div class="post-form">
+        <textarea placeholder="Bạn đang nghĩ gì?" [(ngModel)]="newPostContent"></textarea>
+        <button (click)="addPost()">Đăng</button>
       </div>
-      <div class="feature-item">
-        <h3>TypeScript</h3>
-        <p>JavaScript với type checking</p>
-      </div>
-      <div class="feature-item">
-        <h3>Component Based</h3>
-        <p>Xây dựng UI từ các component có thể tái sử dụng</p>
+      <div class="posts">
+        <div class="post" *ngFor="let post of posts">
+          <h3>{{ post.author }}</h3>
+          <p>{{ post.content }}</p>
+          <span class="timestamp">{{ post.timestamp | date: 'short' }}</span>
+          <div class="post-actions">
+            <button (click)="likePost(post)" [attr.data-post-id]="post.timestamp.getTime()">
+              <i class="fas fa-thumbs-up"></i> Thích ({{ post.likes }})
+            </button>
+            <button (click)="toggleComments(post)">
+              <i class="fas fa-comment"></i> Bình luận ({{ post.comments.length }})
+            </button>
+            <button (click)="sharePost(post)">
+              <i class="fas fa-share"></i> Chia sẻ
+            </button>
+          </div>
+          <div class="comments" *ngIf="post.showComments">
+            <div *ngFor="let comment of post.comments">
+              <p><strong>{{ comment.author }}:</strong> {{ comment.content }}</p>
+            </div>
+            <div class="comment-form">
+              <input [(ngModel)]="post.newComment" placeholder="Viết bình luận..." />
+              <button (click)="addComment(post)">Gửi</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="error-message" *ngIf="errorMessage">
-      {{ errorMessage }}
-    </div>
-
-    <button class="logout-btn" (click)="logout()">Đăng xuất</button>
   </div>
 </div>
+
