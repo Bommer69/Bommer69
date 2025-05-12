@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service'; // Thêm dòng này
 
 @Component({
   selector: 'app-login',
@@ -11,35 +12,44 @@ import { RouterModule, Router } from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  loginForm: FormGroup; // Biểu mẫu đăng nhập
-  errorMessage: string = ''; // Thông báo lỗi
+  loginForm: FormGroup;
+  errorMessage: string = '';
 
   constructor(
-    private fb: FormBuilder, // Dùng để tạo biểu mẫu
-    private router: Router // Điều hướng giữa các trang
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService // Thêm dòng này
   ) {
-    // Khởi tạo biểu mẫu với các trường email và mật khẩu
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  // Xử lý khi người dùng nhấn nút đăng nhập
-  onSubmit() {
+  async onSubmit() {
     if (this.loginForm.valid) {
-      // Xử lý logic đăng nhập (không dùng Firebase)
-      this.router.navigate(['/welcome']);
+      const { email, password } = this.loginForm.value;
+      if (this.authService.validateUser(email, password)) {
+        this.router.navigate(['/welcome'], { queryParams: { fullName: this.getFullNameByEmail(email) } });
+      } else {
+        this.errorMessage = 'Email hoặc mật khẩu không chính xác.';
+      }
     }
   }
 
-  // Truy cập trường email trong biểu mẫu
+  // Lấy fullName từ email để truyền sang welcome (nếu cần)
+  getFullNameByEmail(email: string): string {
+    // users là import từ user-data, nhưng ở đây không có, nên dùng authService
+    const user = (this.authService as any).users?.find?.((u: any) => u.email === email)
+      || (window as any).users?.find?.((u: any) => u.email === email);
+    return user?.fullName || '';
+  }
+
   get email() {
     return this.loginForm.get('email');
   }
 
-  // Truy cập trường mật khẩu trong biểu mẫu
   get password() {
-    return this.loginForm.get('password');
+    return this.loginForm.get('password1');
   }
 }

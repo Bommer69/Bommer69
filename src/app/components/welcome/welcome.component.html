@@ -1,28 +1,49 @@
 <div class="navbar">
   <img src="https://angular.io/assets/images/logos/angular/angular.svg" alt="Angular Logo" class="logo">
-  <h1>MyAngularApp</h1>
+  <h1>Social Web</h1>
   <span class="author-name">Xin chào, {{ authorName }}</span>
 </div>
 <div class="main-container">
-  <div class="sidebar">
+  <div class="sidebar sidebar-left">
     <ul>
-      <li><a href="#">Trang chủ</a></li>
-      <li><a href="#">Thông báo</a></li>
-      <li><a href="#">Tin nhắn</a></li>
-      <li><a href="#">Cài đặt</a></li>
+      <li><a href="#"><i class="fas fa-home"></i> Trang chủ</a></li>
+      <li><a href="#"><i class="fas fa-bell"></i> Thông báo</a></li>
+      <li><a href="#"><i class="fas fa-envelope"></i> Tin nhắn</a></li>
+      <li><a href="#"><i class="fas fa-cog"></i> Cài đặt</a></li>
+      <li><a href="#"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
     </ul>
   </div>
   <div class="welcome-container">
     <div class="welcome-content">
       <h1>Trang chủ</h1>
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+        <img
+          [src]="avatar || 'https://ui-avatars.com/api/?name=' + fullName"
+          alt="Avatar"
+          style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid #ccc;"
+        />
+        <input
+          type="file"
+          #avatarInput
+          style="display: none"
+          accept="image/*"
+          (change)="onAvatarSelected($event)"
+        />
+        <button type="button" (click)="avatarInput.click()">Thêm hình ảnh đại diện</button>
+      </div>
       <div class="post-form">
         <textarea placeholder="Bạn đang nghĩ gì?" [(ngModel)]="newPostContent"></textarea>
+        <input type="file" accept="image/*" (change)="onImageSelected($event)">
+        <div *ngIf="newPostImage" style="margin:8px 0;">
+          <img [src]="newPostImage" alt="Ảnh bài viết" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
+        </div>
         <button (click)="addPost()">Đăng</button>
       </div>
       <div class="posts">
         <div class="post" *ngFor="let post of posts">
           <h3>{{ post.author }}</h3>
           <p>{{ post.content }}</p>
+          <img *ngIf="post.image" [src]="post.image" alt="Ảnh bài viết" style="max-width: 300px; max-height: 300px; border-radius: 8px; margin-bottom: 8px;">
           <span class="timestamp">{{ post.timestamp | date: 'short' }}</span>
           <div class="post-actions">
             <button (click)="likePost(post)" [attr.data-post-id]="post.timestamp.getTime()">
@@ -46,6 +67,45 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="sidebar sidebar-right">
+    <div class="sidebar-section">
+      <h3>Gợi ý bạn bè</h3>
+      <ul>
+        <li>
+          <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="avatar" class="avatar">
+          <span>Nguyễn Văn A</span>
+          <button class="add-btn">Kết bạn</button>
+        </li>
+        <li>
+          <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="avatar" class="avatar">
+          <span>Trần Thị B</span>
+          <button class="add-btn">Kết bạn</button>
+        </li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <h3>Nhóm nổi bật</h3>
+      <ul>
+        <li>
+          <i class="fas fa-users"></i> Lập trình Angular
+        </li>
+        <li>
+          <i class="fas fa-users"></i> Chia sẻ tài liệu IT
+        </li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <h3>Sự kiện sắp tới</h3>
+      <ul>
+        <li>
+          <i class="fas fa-calendar-alt"></i> Webinar Angular 2024
+        </li>
+        <li>
+          <i class="fas fa-calendar-alt"></i> Meetup Dev Hà Nội
+        </li>
+      </ul>
     </div>
   </div>
 </div>

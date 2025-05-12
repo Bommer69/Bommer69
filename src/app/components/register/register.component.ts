@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service'; // Thêm dòng này
 
 @Component({
   selector: 'app-register',
@@ -16,14 +17,16 @@ export class RegisterComponent {
 
   constructor(
     private fb: FormBuilder, // Dùng để tạo biểu mẫu
-    private router: Router // Điều hướng giữa các trang
+    private router: Router, // Điều hướng giữa các trang
+    private authService: AuthService // Thêm dòng này
   ) {
     // Khởi tạo biểu mẫu với các trường cần thiết
     this.registerForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
+      confirmPassword: ['', [Validators.required]],
+      author: [''] // Cho phép nhập author
     }, {
       validators: this.passwordMatchValidator // Kiểm tra mật khẩu khớp
     });
@@ -36,10 +39,21 @@ export class RegisterComponent {
   }
 
   // Xử lý khi người dùng nhấn nút đăng ký
-  onSubmit() {
+  async onSubmit() {
     if (this.registerForm.valid) {
-      // Xử lý logic đăng ký (không dùng Firebase)
-      this.router.navigate(['/welcome']);
+      const { email, password, fullName } = this.registerForm.value;
+      // Gán author = fullName trước khi gửi đi
+      this.registerForm.patchValue({ author: fullName });
+      try {
+        const success = this.authService.registerUser(email, password, fullName);
+        if (success) {
+          this.router.navigate(['/login']);
+        } else {
+          this.errorMessage = 'Email đã tồn tại. Vui lòng dùng email khác.';
+        }
+      } catch (error) {
+        this.errorMessage = 'Đăng ký thất bại. Vui lòng thử lại.';
+      }
     }
   }
 
@@ -58,5 +72,9 @@ export class RegisterComponent {
 
   get confirmPassword() {
     return this.registerForm.get('confirmPassword');
+  }
+
+  get author() {
+    return this.registerForm.get('author');
   }
 }
