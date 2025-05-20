@@ -47,13 +47,8 @@ jobs:
         run: npm install
       - name: Build application
         run: npm run build
-      - name: Deploy to AWS Elastic Beanstalk
-        uses: einaregilsson/beanstalk-deploy@v21
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: my-app
-          environment_name: my-app-env
-          version_label: ${{ github.sha }}
-          region: us-east-1
-          deployment_package: build.zip
+         github_token: ${{ secrets.GITHUB_TOKEN }}
+         publish_dir: ./docs
