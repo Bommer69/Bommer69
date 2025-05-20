@@ -1,16 +1,16 @@
-name: Deploy to GitHub Pages
+name: Deploy Angular to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -19,19 +19,19 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Setup Node
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 20.x
+        node-version: '20.x'
         
     - run: npm ci
-    - run: npm run build
+    - run: npm run build -- --configuration=production --output-path=docs --base-href=/bai-web/
     
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: ./dist  # Thay đổi nếu output build khác
-    
+        path: 'docs'  # Thư mục chứa build output
+        
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
