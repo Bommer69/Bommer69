@@ -31,24 +31,33 @@ jobs:
         run: npm run build -- --configuration=production
 
 
+  
   deploy:
-    needs: test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
+      # Checkout mã nguồn
       - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v3
+
+      # Cài đặt Node.js (nếu dùng framework như React, Vue,...)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: '20'
+
+      # Cài đặt dependencies
       - name: Install dependencies
         run: npm install
-      - name: Build application
+
+      # Build dự án
+      - name: Build
         run: npm run build
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        # Thay đổi lệnh build nếu bạn dùng framework khác, ví dụ: `yarn build` hoặc `vite build`
+
+      # Deploy lên GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-         github_token: ${{ secrets.GITHUB_TOKEN }}
-         publish_dir: ./docs
+          folder: dist # Thư mục chứa file build (thay đổi theo dự án, ví dụ: `build`, `public`,...)
+          branch: gh-pages # Branch để deploy GitHub Pages
