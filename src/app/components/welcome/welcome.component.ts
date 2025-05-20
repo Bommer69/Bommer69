@@ -54,7 +54,8 @@ export class WelcomeComponent implements OnInit {
               { author: 'Trần Thị LanLan', content: 'Hay quá!' }
             ],
             showComments: false,
-            newComment: ''
+            newComment: '',
+            authorAvatar: null // Thêm trường avatar cho mẫu
           },
           {
             author: 'Lê Thị Anh',
@@ -63,7 +64,8 @@ export class WelcomeComponent implements OnInit {
             likes: 1,
             comments: [],
             showComments: false,
-            newComment: ''
+            newComment: '',
+            authorAvatar: null
           }
         ];
         localStorage.setItem('posts', JSON.stringify(this.posts));
@@ -107,7 +109,8 @@ export class WelcomeComponent implements OnInit {
           likes: 0,
           comments: [],
           showComments: false,
-          newComment: ''
+          newComment: '',
+          authorAvatar: this.avatar // Lưu avatar của author vào post
         };
         this.posts.unshift(newPost);
         // Lưu lại vào localStorage

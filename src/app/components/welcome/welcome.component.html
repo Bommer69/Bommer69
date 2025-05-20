@@ -41,7 +41,14 @@
       </div>
       <div class="posts">
         <div class="post" *ngFor="let post of posts">
-          <h3>{{ post.author }}</h3>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <img
+              [src]="post.authorAvatar || 'https://ui-avatars.com/api/?name=' + post.author"
+              alt="Avatar"
+              style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ccc;"
+            />
+            <h3 style="margin: 0;">{{ post.author }}</h3>
+          </div>
           <p>{{ post.content }}</p>
           <img *ngIf="post.image" [src]="post.image" alt="Ảnh bài viết" style="max-width: 300px; max-height: 300px; border-radius: 8px; margin-bottom: 8px;">
           <span class="timestamp">{{ post.timestamp | date: 'short' }}</span>
