@@ -1,8 +1,0 @@
-{
-  "routes": {
-    "/repo-name": {},
-    "/repo-name/login": {},
-    "/repo-name/register": {},
-    "/repo-name/welcome": {}
-  }
-}
