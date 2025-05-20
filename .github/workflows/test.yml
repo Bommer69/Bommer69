@@ -27,35 +27,32 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Chạy kiểm thử
+      # Cài đặt Chrome cho kiểm thử
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      # Chạy kiểm thử với ChromeHeadless
       - name: Run tests
-        run: npm test
+        run: npm test -- --browsers=ChromeHeadless --watch=false
 
   deploy:
-    needs: test # Chỉ chạy deploy nếu test thành công
+    needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
-      # Checkout mã nguồn
       - name: Checkout code
         uses: actions/checkout@v4
-
-      # Cài đặt Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      # Cài đặt dependencies
       - name: Install dependencies
         run: npm install
-
-      # Build ứng dụng
       - name: Build application
         run: npm run build
-
-      # Triển khai lên AWS Elastic Beanstalk (hoặc dịch vụ khác)
       - name: Deploy to AWS Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
