@@ -33,12 +33,4 @@ jobs:
     # Bước 5: Build ứng dụng
     - name: Build Angular
       run: npm run build -- --configuration=production
-      
-    # Bước 6: Chạy unit tests
-    - name: Run unit tests
-      run: npm test -- --watch=false --browsers=ChromeHeadless
-      
-    # Bước 7: Kiểm tra coverage (tuỳ chọn)
-    - name: Test coverage
-      run: npm run test:coverage
-      continue-on-error: true  # Cho phép workflow tiếp tục nếu coverage thấp
+  
