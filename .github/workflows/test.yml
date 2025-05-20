@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://<your-username>.github.io/<your-repo>
+      url: https://github.com/Bommer69/bai-web.git
     steps:
     - name: Await approval
       run: echo "Awaiting approval to deploy..."
