@@ -1,37 +1,68 @@
-name: Deploy Angular to GitHub Pages
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-and-deploy:
+  test:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        
-    - run: npm ci
-    - run: npm run build -- --configuration=production --output-path=docs --base-href=/bai-web/
-    
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: 'docs'  # Thư mục chứa build output
-        
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+      # Checkout mã nguồn
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Cài đặt Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Cài đặt dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Chạy kiểm thử
+      - name: Run tests
+        run: npm test
+
+  deploy:
+    needs: test # Chỉ chạy deploy nếu test thành công
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      # Checkout mã nguồn
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Cài đặt Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Cài đặt dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Build ứng dụng
+      - name: Build application
+        run: npm run build
+
+      # Triển khai lên AWS Elastic Beanstalk (hoặc dịch vụ khác)
+      - name: Deploy to AWS Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: my-app
+          environment_name: my-app-env
+          version_label: ${{ github.sha }}
+          region: us-east-1
+          deployment_package: build.zip
