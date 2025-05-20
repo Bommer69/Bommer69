@@ -8,6 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:my-angular-app": "node dist/my-angular-app/server/server.mjs"
+  
   },
   "private": true,
   "dependencies": {
@@ -42,6 +43,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.7.2"
+    
   },
   "description": "This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.3.",
   "main": "index.js",
@@ -56,4 +58,5 @@
     "url": "https://github.com/Bommer69/bai-web/issues"
   },
   "homepage": "https://github.com/Bommer69/bai-web#readme"
+  
 }
