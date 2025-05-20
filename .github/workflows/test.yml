@@ -1,42 +1,17 @@
-name: CI/CD Pipeline
+name: CI/CD to GitHub Pages
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  test:
+  ci:
+    name: Build & Test
     runs-on: ubuntu-latest
+    outputs:
+      build-dir: ${{ steps.set-dir.outputs.dir }}
 
-    steps:
-      # Checkout mã nguồn
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # Cài đặt Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      # Cài đặt dependencies
-      - name: Install dependencies
-        run: npm install
-      # : Build ứng dụng
-      - name: Build Angular
-        run: npm run build -- --configuration=production
-
-
-  
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -49,12 +24,39 @@ jobs:
     - name: Install dependencies
       run: npm install
 
+    - name: Run tests
+      run: npm test
+
     - name: Build project
       run: npm run build
+
+    - name: Set build dir
+      id: set-dir
+      run: echo "dir=build" >> $GITHUB_OUTPUT
+      # Nếu dùng Angular: echo "dir=dist/your-project" >> $GITHUB_OUTPUT
+
+  manual_approval:
+    name: Wait for Manual Approval
+    needs: ci
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://<your-username>.github.io/<your-repo>
+    steps:
+    - name: Await approval
+      run: echo "Awaiting approval to deploy..."
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: manual_approval
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build  # Với React
-        # publish_dir: ./dist/ten-project  # Với Angular
+        publish_dir: ./build  # Thay đổi nếu dùng Angular
