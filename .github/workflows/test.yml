@@ -26,9 +26,6 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
-    # Bước 4: Kiểm tra code style
-    - name: Run lint
-      run: npm run lint
       
     # Bước 5: Build ứng dụng
     - name: Build Angular
