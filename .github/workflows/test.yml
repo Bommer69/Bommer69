@@ -1,0 +1,59 @@
+name: CI/CD to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    outputs:
+      build-dir: ${{ steps.set-dir.outputs.dir }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build project
+      run: npm run build
+
+    - name: Set build dir
+      id: set-dir
+      run: echo "dir=build" >> $GITHUB_OUTPUT
+      # Nếu dùng Angular: echo "dir=dist/your-project" >> $GITHUB_OUTPUT
+
+  manual_approval:
+    name: Wait for Manual Approval
+    needs: ci
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://github.com/Bommer69/bai-web.git
+    steps:
+    - name: Await approval
+      run: echo "Awaiting approval to deploy..."
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: manual_approval
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build  # Thay đổi nếu dùng Angular
