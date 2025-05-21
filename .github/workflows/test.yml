@@ -40,7 +40,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/[tên-dự-án]  # Thay bằng tên thư mục trong dist/
+          path: dist/my-angular-app  # Thay bằng tên thư mục trong dist/
 
   deploy:
     environment:
