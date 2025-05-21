@@ -1,59 +1,62 @@
-name: CI/CD to GitHub Pages
+name: Test and Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  ci:
-    name: Build & Test
+  test:
     runs-on: ubuntu-latest
-    outputs:
-      build-dir: ${{ steps.set-dir.outputs.dir }}
-
+    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
+    - uses: actions/checkout@v4
+    
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v3
       with:
-        node-version: '18'
-
+        node-version: '20'
+        cache: 'npm'
+    
     - name: Install dependencies
-      run: npm install
-
+      run: npm ci
+      
+    - name: Run tests
+      run: npm test
+      
     - name: Build project
       run: npm run build
-
-    - name: Set build dir
-      id: set-dir
-      run: echo "dir=build" >> $GITHUB_OUTPUT
-      # Nếu dùng Angular: echo "dir=dist/your-project" >> $GITHUB_OUTPUT
-
-  manual_approval:
-    name: Wait for Manual Approval
-    needs: ci
-    runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: https://github.com/Bommer69/bai-web.git
-    steps:
-    - name: Await approval
-      run: echo "Awaiting approval to deploy..."
+      
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-output
+        path: dist/  # Thay đổi nếu thư mục build khác
 
   deploy:
-    name: Deploy to GitHub Pages
-    needs: manual_approval
+    needs: test  # Chỉ chạy sau khi job test thành công
     runs-on: ubuntu-latest
-
+    permissions:
+      pages: write
+      id-token: write
+    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
+    - uses: actions/checkout@v4
+    
+    - name: Download build artifact
+      uses: actions/download-artifact@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build  # Thay đổi nếu dùng Angular
+        name: build-output
+        path: dist/
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+      
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: 'dist/'
+        
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v2
