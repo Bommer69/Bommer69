@@ -1,8 +1,8 @@
-name: Deploy React App to GitHub Pages
+name: Deploy Angular to GitHub Pages
 
 on:
   push:
-    branches: ["demo-add-picture"]
+    branches: ["demo-add-picture"]  # Branch bạn muốn trigger
   workflow_dispatch:
 
 permissions:
@@ -20,29 +20,35 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: '20'
+          
       - name: Install Dependencies
         run: npm ci
-      - name: Build
-        run: npm run build
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
+      
+      - name: Build Angular
+        run: npm run build -- --configuration=production
+      
+      - name: Verify Output
+        run: |
+          echo "Build output:"
+          ls -R dist/  # Angular build ra thư mục dist/
+      
+      - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path:  dist/my-angular-app
+          path: dist/[tên-dự-án]  # Thay bằng tên thư mục trong dist/
 
-  deploy-production:
+  deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/demo-app-picture'
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
