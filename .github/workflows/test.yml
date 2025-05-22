@@ -30,7 +30,7 @@ jobs:
         run: npm ci
       
       - name: Build Angular
-        run: npm run build -- --configuration=production --base-href=/bai-web/
+        run: npm run build -- --configuration=production --base-href="https://bommer69.github.io/Bommer69/"
       
       - name: Verify Output
         run: |
