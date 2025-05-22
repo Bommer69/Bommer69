@@ -30,7 +30,7 @@ jobs:
         run: npm ci
       
       - name: Build Angular
-        run: npm run build -- --configuration=production --base-href="https://bommer69.github.io/Bommer69/"
+        run: npm run build -- --configuration=production
       
       - name: Verify Output
         run: |
@@ -40,7 +40,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/my-angular-app  # Thay bằng tên thư mục trong dist/
+          path: ./dist/my-angular-app  # Thay bằng tên thư mục trong dist/
 
   deploy:
     environment:
