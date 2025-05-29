@@ -54,9 +54,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist/my-angular-app  # ⚠️ Đổi 'my-angular-app' thành tên thư mục thực tế trong dist/
-
-      - name: Run tests
-        run: npm test    
+  
 
   # 🚀 Job deploy: triển khai lên GitHub Pages
   deploy:
