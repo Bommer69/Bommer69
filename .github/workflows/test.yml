@@ -1,54 +1,72 @@
+# 📦 Tên của workflow, sẽ hiển thị trong tab Actions trên GitHub
 name: Deploy Angular to GitHub Pages
 
+# 🚀 Các trigger để chạy workflow
 on:
   push:
-    branches: ["demo-add-picture"]  # Branch bạn muốn trigger
-  workflow_dispatch:
+    branches: ["demo-add-picture"]  # Chạy khi có code được push lên nhánh này
+  workflow_dispatch:                # Cho phép chạy workflow thủ công từ GitHub UI
 
+# 🔐 Quyền truy cập cần thiết để workflow hoạt động
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: read       # Cho phép đọc nội dung repository
+  pages: write         # Cho phép ghi nội dung lên GitHub Pages
+  id-token: write      # Cần cho xác thực khi deploy
 
+# 🚦 Đảm bảo chỉ có 1 workflow deploy đang chạy (tránh xung đột)
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: "pages"               # Tên nhóm concurrency
+  cancel-in-progress: false    # Không hủy workflow đang chạy nếu có workflow mới
 
+# 🧱 Job build: thực hiện build ứng dụng Angular
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest     # Chạy trên môi trường Ubuntu
+
     steps:
+      # 🔄 Bước 1: Lấy code từ repository
       - name: Checkout
         uses: actions/checkout@v4
-        
+
+      # 🔧 Bước 2: Cài đặt Node.js (phiên bản 20)
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          
+
+      # 📦 Bước 3: Cài đặt các package từ package-lock.json
       - name: Install Dependencies
         run: npm ci
-      
+
+      # 🏗️ Bước 4: Build Angular với cấu hình production
       - name: Build Angular
         run: npm run build -- --configuration=production --base-href=/Bommer69/
-      
+        # ⚠️ base-href rất quan trọng cho GitHub Pages
+
+      # 🔍 Bước 5: Kiểm tra thư mục đầu ra sau khi build
       - name: Verify Output
         run: |
           echo "Build output:"
-          ls -R dist/  # Angular build ra thư mục dist/
-      
+          ls -R dist/  # Kiểm tra xem output build ra đúng chưa
+
+      # ☁️ Bước 6: Tải artifact (thư mục build) để chuẩn bị deploy
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist/my-angular-app  # Thay bằng tên thư mục trong dist/
+          path: ./dist/my-angular-app  # ⚠️ Đổi 'my-angular-app' thành tên thư mục thực tế trong dist/
+  
 
+  # 🚀 Job deploy: triển khai lên GitHub Pages
   deploy:
     environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      name: github-pages                     # Tên môi trường
+      url: ${{ steps.deployment.outputs.page_url }}  # Lấy URL sau khi deploy xong
+
     runs-on: ubuntu-latest
-    needs: build
+    needs: build                             # Job này chạy sau khi build thành công
+
     steps:
+      # 🚀 Deploy artifact lên GitHub Pages
       - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v4        # Dùng action chính thức của GitHub để deploy
